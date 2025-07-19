@@ -1,6 +1,6 @@
 name: eapp_jittery_core
 description: Framework-agnostic UI component library for Eutopia
-version: 1.0.0
+version: 2025.07.38
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
