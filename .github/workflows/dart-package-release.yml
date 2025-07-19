@@ -41,7 +41,7 @@ jobs:
 
       - name: Publish Package
         env:
-          GH_TOKEN: ${{ secrets.PROTOBUF_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           # Create release
           gh release create v${{ steps.build.outputs.version }} \
