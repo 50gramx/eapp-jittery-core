@@ -363,3 +363,57 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   <p><strong>Framework-agnostic UI component library for Eutopia</strong></p>
   <p><em>Built with ❤️ by the EAPP Team</em></p>
 </div> 
+
+## Jittery & Eutopia: Integration, Learnings, and Key Decisions (Historical Reference)
+
+### Overview
+- **Jittery** is a framework-agnostic UI component library for Eutopia, designed for multi-platform (Flutter/Dart, Python, Node.js, Kotlin, Swift) integration.
+- **Eutopia** is the broader application ecosystem, with hybrid-dart as the main integration point for UI and business logic.
+
+### Key Learnings & Decisions
+- **Protobuf Distribution:**
+  - Multi-language protobuf client code generation is automated via GitHub Actions.
+  - Artifacts are distributed using GitHub Releases and private package indexes (hosted via raw GitHub URLs).
+  - Versioning uses a `year.month.patch` format for consistency across languages.
+- **Dart/Flutter Package Management:**
+  - `publish_to: none` is set for private packages to avoid accidental pub.dev publishing.
+  - For CI/CD, git dependencies are used, but for publishing, only published versions are allowed.
+  - Integration with hybrid-dart is done via git or path dependencies during development.
+- **CI/CD & Workflows:**
+  - Workflows are parallelized for multi-language builds.
+  - HTML templates for package indexes are offloaded to external files for maintainability.
+  - GitHub token permissions are critical for private repo access and release uploads.
+  - Branch protection and artifact size limits must be respected to avoid push failures.
+- **Repository Structure:**
+  - `eapp-jittery-core` contains the core UI logic and components.
+  - `eapp-jittery-modelled` contains design language-specific implementations (e.g., Level design system).
+  - `eapp-hybrid-dart` is the main app, integrating Jittery and Eutopia logic.
+- **Common Issues & Fixes:**
+  - 403/404 errors: Usually due to token or permissions issues.
+  - Dart version mismatches: Ensure workflow Dart SDK matches `pubspec.yaml`.
+  - Git dependencies: Not allowed for publishable packages; use only for development.
+  - Unused imports/variables: Clean up to pass `flutter analyze`.
+  - Merge conflicts: Always resolve in favor of the latest version and keep `publish_to: none` for private packages.
+
+### Integration Steps (for new contributors)
+1. **Clone all relevant repos:** `eapp-jittery-core`, `eapp-jittery-modelled`, `eapp-hybrid-dart`.
+2. **Install dependencies:**
+   - For Dart/Flutter: `flutter pub get` in each package.
+   - For Python/Node.js: Use respective package managers.
+3. **Link packages for local development:**
+   - Use `path:` dependencies in `pubspec.yaml` for local testing.
+   - Switch to `git:` or published versions for CI/CD.
+4. **Run tests:**
+   - Use `flutter test` and `flutter analyze` for Dart packages.
+   - Run integration tests in `eapp-hybrid-dart` to verify end-to-end functionality.
+5. **CI/CD:**
+   - Push changes to feature branches; use PRs for main branch merges.
+   - Ensure all workflows pass before merging.
+
+### References
+- See the main `README.md` in each repo for package-specific details.
+- For troubleshooting, check workflow logs and ensure all tokens/permissions are set up correctly.
+- For further integration, refer to the `integration tests` section in `eapp-hybrid-dart`.
+
+---
+This section is maintained as a living document. Please update with new learnings, decisions, or integration steps as the project evolves. 

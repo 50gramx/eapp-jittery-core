@@ -16,6 +16,7 @@ abstract class JitteryCard extends StatelessWidget {
     this.height,
     this.elevation,
     this.borderRadius,
+    this.color,
   }) : super(key: key);
 
   /// The main content of the card
@@ -53,6 +54,9 @@ abstract class JitteryCard extends StatelessWidget {
   
   /// Border radius
   final BorderRadius? borderRadius;
+
+  /// Background color
+  final Color? color;
 
   /// Build the card container
   Widget buildCardContainer(Widget content);

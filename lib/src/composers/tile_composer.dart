@@ -17,13 +17,6 @@ abstract class JitteryTileComposer {
     required Widget composedComponent,
   });
 
-  /// Resolve a condition for a specific variable type
-  bool resolveConditionFor({
-    required String variableTypeNameCode,
-    required YamlMap condition,
-    required Map<String, dynamic> localVariableValue,
-  });
-
   /// Build a visibility widget
   Widget buildVisibility({
     required bool visible,
