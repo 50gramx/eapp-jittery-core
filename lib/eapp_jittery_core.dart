@@ -8,7 +8,6 @@ export 'src/components/controls/jittery_toggle.dart';
 export 'src/components/controls/jittery_switch.dart';
 export 'src/components/controls/jittery_checkbox.dart';
 export 'src/components/controls/jittery_slider.dart';
-export 'src/components/controls/jittery_slider.dart';
 export 'src/components/cards/jittery_card.dart';
 export 'src/components/navigation/jittery_navigation.dart';
 export 'src/components/display/jittery_image.dart';
