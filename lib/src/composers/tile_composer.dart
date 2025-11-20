@@ -15,6 +15,12 @@ abstract class JitteryTileComposer {
     required String appName,
     required YamlList conditions,
     required Widget composedComponent,
+    Function({
+      required int communityCode,
+      required String orgName,
+      required String appName,
+      required String variableNameCode,
+    })? variableResolver,
   });
 
   /// Build a visibility widget

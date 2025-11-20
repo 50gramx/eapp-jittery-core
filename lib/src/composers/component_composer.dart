@@ -39,6 +39,14 @@ abstract class JitteryComponentComposer {
       required String appName,
       required String variableNameCode,
     })? variableResolver,
+    void Function({
+      required String variableNameCode,
+      required void Function(dynamic value) onChanged,
+    })? variableSubscriber,
+    void Function({
+      required String variableNameCode,
+      required void Function(dynamic value) onChanged,
+    })? variableUnsubscriber,
   });
 
   /// Get the component code from the component name code
