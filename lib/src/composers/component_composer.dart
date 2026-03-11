@@ -155,4 +155,11 @@ abstract class JitteryComponentComposer {
     String? label,
     bool isEnabled = true,
   });
+
+  /// Build a list view component
+  Widget buildListView({
+    required List<Widget> children,
+    bool shrinkWrap = true,
+    ScrollPhysics? physics,
+  });
 }
