@@ -12,6 +12,7 @@ export 'src/components/cards/jittery_card.dart';
 export 'src/components/navigation/jittery_navigation.dart';
 export 'src/components/display/jittery_image.dart';
 export 'src/components/display/jittery_list_item.dart';
+export 'src/components/display/jittery_list_view.dart';
 export 'src/components/display/jittery_divider.dart';
 
 // Export composers
