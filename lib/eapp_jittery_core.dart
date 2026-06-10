@@ -14,6 +14,7 @@ export 'src/components/display/jittery_image.dart';
 export 'src/components/display/jittery_list_item.dart';
 export 'src/components/display/jittery_list_view.dart';
 export 'src/components/display/jittery_divider.dart';
+export 'src/components/display/jittery_qr_code.dart';
 
 // Export composers
 export 'src/composers/component_composer.dart';

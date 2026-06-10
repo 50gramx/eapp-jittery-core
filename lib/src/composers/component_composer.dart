@@ -162,4 +162,12 @@ abstract class JitteryComponentComposer {
     bool shrinkWrap = true,
     ScrollPhysics? physics,
   });
+
+  /// Build a QR code display component (EIC1027)
+  Widget buildQrCode({
+    required String data,
+    double size = 200,
+    Color? foregroundColor,
+    Color? backgroundColor,
+  });
 }
