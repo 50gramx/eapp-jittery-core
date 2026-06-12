@@ -18,4 +18,8 @@ export 'src/components/display/jittery_qr_code.dart';
 
 // Export composers
 export 'src/composers/component_composer.dart';
-export 'src/composers/tile_composer.dart'; 
+export 'src/composers/tile_composer.dart';
+
+// Export design-system token layer (SA-UI-1/2)
+export 'src/design/design_system.dart';
+export 'src/design/design_tokens.dart';
