@@ -23,3 +23,4 @@ export 'src/composers/tile_composer.dart';
 // Export design-system token layer (SA-UI-1/2)
 export 'src/design/design_system.dart';
 export 'src/design/design_tokens.dart';
+export 'src/design/color_scheme.dart';

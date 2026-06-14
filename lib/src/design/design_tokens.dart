@@ -62,6 +62,73 @@ abstract class DesignTokens {
   double get radiusLarge;
   List<BoxShadow> get elevation1;
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // SA-UI-8: EP&N bridge tokens.
+  //
+  // The experience brief (§7/§11/§14.4) requires level and carbon to read as
+  // *dialects of one voice* — a shared accent family, semantic state set,
+  // interaction states, spacing rhythm, type-scale relationships, motion and
+  // iconography. These live as concrete, derived defaults here so both systems
+  // inherit one coherent set; a system overrides only where its language truly
+  // diverges. Everything is expressed in terms of the semantic tokens above,
+  // so they stay correct under light/dark and any palette change.
+  // ─────────────────────────────────────────────────────────────────────────
+
+  bool get isDark => brightness == Brightness.dark;
+
+  // interaction states — hover/active surfaces, selected row, accent ramp, focus
+  Color get backgroundHover => contentPrimary.withOpacity(isDark ? 0.08 : 0.05);
+  Color get backgroundActive => contentPrimary.withOpacity(isDark ? 0.13 : 0.09);
+  Color get layerHover => contentPrimary.withOpacity(isDark ? 0.10 : 0.06);
+  Color get selectedSurface => accent.withOpacity(0.12);
+  Color get accentHover =>
+      Color.alphaBlend((isDark ? Colors.white : Colors.black).withOpacity(0.14), accent);
+  Color get accentSubtle => accent.withOpacity(0.12);
+  Color get focusBorder => accent;
+
+  // borders — hairline / strong divider / interactive
+  Color get borderSubtle => border;
+  Color get borderStrong => contentTertiary;
+  Color get borderInteractive => accent;
+
+  // field/input surface (carbon distinguishes field from layer)
+  Color get field => backgroundSecondary;
+
+  // semantic: info + subtle "support" tints for inline messages / badges /
+  // ambient-state callouts (e.g. metering "local = 0", "why-not-running").
+  Color get info => accent;
+  Color get successSubtle => success.withOpacity(0.12);
+  Color get warningSubtle => warning.withOpacity(0.16);
+  Color get errorSubtle => error.withOpacity(0.12);
+  Color get infoSubtle => info.withOpacity(0.12);
+
+  // type-scale fill — dense tables (bodySmall/caption), metrics (displayMedium),
+  // section headings (headingLarge/Small). Derived from each system's own base
+  // styles so family/weight/letter-spacing stay on-language.
+  TextStyle get displayMedium => displayLarge.copyWith(fontSize: 24);
+  TextStyle get headingLarge => headingMedium.copyWith(fontSize: 20);
+  TextStyle get headingSmall => headingMedium.copyWith(fontSize: 14);
+  TextStyle get bodySmall => bodyMedium.copyWith(fontSize: 12);
+  TextStyle get caption => label.copyWith(fontSize: 11);
+
+  // spacing fill — keeps the 4/8 rhythm continuous for larger layouts.
+  double get space5 => space4 + space1;
+  double get space7 => space6 + space2;
+  double get space8 => space6 + space4;
+
+  // motion — deliberately shared across both languages (§7/§9/§12: one rhythm,
+  // dignified beats). Animations read tokens instead of hardcoding Durations.
+  Duration get durationFast => const Duration(milliseconds: 110);
+  Duration get durationModerate => const Duration(milliseconds: 240);
+  Duration get durationSlow => const Duration(milliseconds: 400);
+  Curve get easingStandard => Curves.easeInOutCubic;
+  Curve get easingEntrance => Curves.easeOutCubic;
+
+  // iconography rhythm — shared icon sizes (§11 "shared iconography family").
+  double get iconSizeSmall => 16;
+  double get iconSizeMedium => 20;
+  double get iconSizeLarge => 24;
+
   /// Resolve the token set for a system + brightness.
   static DesignTokens resolve(DesignSystem system, Brightness brightness) {
     switch (system) {
@@ -93,39 +160,49 @@ class LevelTokens extends DesignTokens {
 
   bool get _dark => brightness == Brightness.dark;
 
+  // EP&N v2 bridge tokens (SA-UI-8). Light level surface is *warm paper*
+  // (oklch 0.975/0.006/85 ≈ #F9F6F2), warm near-black ink (oklch 0.25/0.02/60),
+  // and the shared **purple** accent (oklch 0.50/0.13/300) used in *both*
+  // dialects — the conscious "purple everywhere" decision from the v2 design
+  // review, replacing the old blue. Dark level is purple-tinted (hue 300) so
+  // level and carbon read as one house. §7/§14.4.
   @override
-  Color get backgroundPrimary => _dark ? const Color(0xFF1A1A1A) : const Color(0xFFFFFFFF);
+  Color get backgroundPrimary => _dark ? const Color(0xFF14111B) : const Color(0xFFF9F6F2);
   @override
-  Color get backgroundSecondary => _dark ? const Color(0xFF242424) : const Color(0xFFF4F4F4);
+  Color get backgroundSecondary => _dark ? const Color(0xFF1E1A28) : const Color(0xFFE8E4DC);
   @override
-  Color get backgroundTertiary => _dark ? const Color(0xFF2E2E2E) : const Color(0xFFECECEC);
+  Color get backgroundTertiary => _dark ? const Color(0xFF2A2536) : const Color(0xFFDED9CF);
   @override
-  Color get backgroundInverse => _dark ? const Color(0xFFF4F4F4) : const Color(0xFF1A1A1A);
+  Color get backgroundInverse => _dark ? const Color(0xFFF9F6F2) : const Color(0xFF14111B);
 
   @override
-  Color get contentPrimary => _dark ? const Color(0xFFF5F5F5) : const Color(0xFF1A1A1A);
+  Color get contentPrimary => _dark ? const Color(0xFFF4F0EA) : const Color(0xFF291F18);
   @override
-  Color get contentSecondary => _dark ? const Color(0xFFB8B8B8) : const Color(0xFF666666);
+  Color get contentSecondary => _dark ? const Color(0xFFBDB6C4) : const Color(0xFF564B42);
   @override
-  Color get contentTertiary => _dark ? const Color(0xFF8A8A8A) : const Color(0xFF999999);
+  Color get contentTertiary => _dark ? const Color(0xFF8F8799) : const Color(0xFF6C6158);
   @override
-  Color get contentInverse => _dark ? const Color(0xFF1A1A1A) : const Color(0xFFFFFFFF);
+  Color get contentInverse => _dark ? const Color(0xFF14111B) : const Color(0xFFFFFFFF);
   @override
   Color get contentDisabled => (_dark ? Colors.white : Colors.black).withOpacity(0.38);
 
   @override
-  Color get accent => const Color(0xFF3B82F6);
+  Color get accent => const Color(0xFF6F4FA1); // oklch 0.50/0.13/300 — brand purple
   @override
-  Color get success => const Color(0xFF22C55E);
+  Color get accentHover => const Color(0xFF583A84); // oklch 0.42/0.12/300
   @override
-  Color get warning => const Color(0xFFF59E0B);
+  Color get success => const Color(0xFF007840); // oklch 0.50/0.13/155 — safe/local/earnings
   @override
-  Color get error => const Color(0xFFEF4444);
+  Color get warning => const Color(0xFFB37903); // oklch 0.62/0.13/75 — caution
   @override
-  Color get border => _dark ? const Color(0xFF333333) : const Color(0xFFE0E0E0);
+  Color get error => const Color(0xFFB94642); // oklch 0.55/0.15/25
+  @override
+  Color get info => const Color(0xFF6F4FA1);
+  @override
+  Color get border => _dark ? const Color(0xFF2A2536) : const Color(0xFFDCD6CC);
 
   @override
-  String? get fontFamily => 'Montserrat';
+  String? get fontFamily => 'Albert Sans';
   @override
   TextStyle get displayLarge => TextStyle(fontFamily: fontFamily, fontSize: 32, fontWeight: FontWeight.w700, color: contentPrimary);
   @override
@@ -194,14 +271,24 @@ class CarbonTokens extends DesignTokens {
   @override
   Color get contentDisabled => (_dark ? Colors.white : Colors.black).withOpacity(0.25);
 
+  // EP&N v2 bridge (SA-UI-8): the *conscious purple-everywhere* decision — the
+  // accent/link/focus family is the shared brand purple (oklch 0.50/0.13/300),
+  // NOT IBM Blue 60, so carbon and level read as one voice. Surfaces, type and
+  // 0-radius stay pure Carbon. Semantic green/red share the bridge hues (155/25).
   @override
-  Color get accent => const Color(0xFF0F62FE); // Carbon Blue 60
+  Color get accent => const Color(0xFF6F4FA1); // oklch 0.50/0.13/300 — brand purple
   @override
-  Color get success => const Color(0xFF24A148); // Green 50
+  Color get accentHover => const Color(0xFF583A84); // oklch 0.42/0.12/300
   @override
-  Color get warning => const Color(0xFFF1C21B); // Yellow 30
+  Color get success => const Color(0xFF007840); // oklch 0.50/0.13/155
   @override
-  Color get error => const Color(0xFFDA1E28); // Red 60
+  Color get warning => const Color(0xFFB37903); // oklch 0.62/0.13/75
+  @override
+  Color get error => const Color(0xFFB94642); // oklch 0.55/0.15/25
+  @override
+  Color get info => const Color(0xFF6F4FA1); // brand purple (was support-info blue)
+  @override
+  Color get focusBorder => const Color(0xFF6F4FA1); // brand purple focus ring
   @override
   Color get border => _dark ? const Color(0xFF393939) : const Color(0xFFE0E0E0);
 
