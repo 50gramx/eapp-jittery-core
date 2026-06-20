@@ -1172,6 +1172,65 @@ class CarbonTokens extends DesignTokens {
     color: color ?? contentPrimary,
   );
 
+  /// Resolves a canonical Carbon type token or a compatibility alias.
+  ///
+  /// Token matching ignores case and separators, so `heading-03`,
+  /// `heading03`, and `heading_03` are equivalent. Unknown values safely fall
+  /// back to Carbon body-01.
+  TextStyle resolveTypeStyle(String name) {
+    final normalized = _normalizeTypeName(name);
+    final canonical = switch (normalized) {
+      // Generic and Material-era contract aliases preserve the Carbon
+      // composer's previous rendered output. Canonical Carbon names opt into
+      // the complete scale without unexpectedly restyling existing eApps.
+      'displaylarge' || 'headlinelarge' => 'heading06',
+      'headingmedium' || 'titlemedium' || 'titlelarge' => 'heading01',
+      'label' || 'labelsmall' || 'labelmedium' => 'label01',
+      'mono' => 'code01',
+      'body1' ||
+      'body2' ||
+      'bodylarge' ||
+      'bodymedium' ||
+      'bodysmall' ||
+      'caption' ||
+      'displaymedium' ||
+      'headline6' ||
+      'headlinemedium' ||
+      'headlinesmall' ||
+      'labellarge' ||
+      'titlesmall' => 'bodyCompact01',
+      // Carbon v10 aliases retained for existing contracts.
+      'bodyshort01' => 'bodyCompact01',
+      'bodylong01' => 'body01',
+      'productiveheading03' || 'expressiveheading03' => 'heading03',
+      'productiveheading05' || 'expressiveheading05' => 'heading05',
+      'productiveheading06' => 'heading06',
+      'productiveheading07' => 'heading07',
+      _ => null,
+    };
+    final target =
+        canonical == null ? normalized : _normalizeTypeName(canonical);
+    CarbonGeneratedTypeStyle? token;
+    String? tokenName;
+    for (final entry in typeSource.styles.entries) {
+      if (_normalizeTypeName(entry.key) == target) {
+        token = entry.value;
+        tokenName = entry.key;
+        break;
+      }
+    }
+    token ??= typeSource['body01'] ?? typeSource['bodyLong01'];
+    tokenName ??= 'body01';
+    final isCode = _normalizeTypeName(tokenName).startsWith('code');
+    return _typeStyle(
+      token!,
+      fontFamilyOverride: isCode ? 'IBM Plex Mono' : null,
+    );
+  }
+
+  String _normalizeTypeName(String value) =>
+      value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+
   @override
   Color get backgroundPrimary => _color(theme.background);
   @override
@@ -1275,28 +1334,27 @@ class CarbonTokens extends DesignTokens {
   @override
   String? get fontFamily => 'IBM Plex Sans';
   @override
-  TextStyle get displayLarge => _typeStyle(typeSource.productiveHeading06);
+  TextStyle get displayLarge => resolveTypeStyle('heading06');
   @override
-  TextStyle get displayMedium => _typeStyle(typeSource.productiveHeading05);
+  TextStyle get displayMedium => resolveTypeStyle('heading05');
   @override
-  TextStyle get headingLarge => _typeStyle(typeSource.productiveHeading03);
+  TextStyle get headingLarge => resolveTypeStyle('heading03');
   @override
-  TextStyle get headingMedium => _typeStyle(typeSource.heading01);
+  TextStyle get headingMedium => resolveTypeStyle('heading01');
   @override
-  TextStyle get headingSmall => _typeStyle(typeSource.label01);
+  TextStyle get headingSmall => resolveTypeStyle('label01');
   @override
-  TextStyle get bodyMedium => _typeStyle(typeSource.bodyShort01);
+  TextStyle get bodyMedium => resolveTypeStyle('bodyCompact01');
   @override
-  TextStyle get bodySmall => _typeStyle(typeSource.caption01);
+  TextStyle get bodySmall => resolveTypeStyle('caption01');
   @override
   TextStyle get label =>
-      _typeStyle(typeSource.label01, color: contentSecondary);
+      resolveTypeStyle('label01').copyWith(color: contentSecondary);
   @override
   TextStyle get caption =>
-      _typeStyle(typeSource.caption01, color: contentSecondary);
+      resolveTypeStyle('caption01').copyWith(color: contentSecondary);
   @override
-  TextStyle get mono =>
-      _typeStyle(typeSource.code01, fontFamilyOverride: 'IBM Plex Mono');
+  TextStyle get mono => resolveTypeStyle('code01');
 
   @override
   double get space1 => carbonSpacing.spacing02;

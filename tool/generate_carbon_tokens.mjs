@@ -100,27 +100,101 @@ function theme(name, t) {
 }
 
 function styleConst(name, s) {
-  return `  ${name}: CarbonGeneratedTypeStyle(fontSize: ${s.fontSize}, fontWeight: ${s.fontWeight}, lineHeight: ${s.lineHeight}, letterSpacing: ${s.letterSpacing}),`;
+  return `    '${name}': CarbonGeneratedTypeStyle(fontSize: ${s.fontSize}, fontWeight: ${s.fontWeight}, lineHeight: ${s.lineHeight}, letterSpacing: ${s.letterSpacing}),`;
 }
 
 const themes = await importCarbonPackage('@carbon/themes');
 const layout = await importCarbonPackage('@carbon/layout');
 const type = await importCarbonPackage('@carbon/type');
 
+const typeNames = [
+  'caption01',
+  'label01',
+  'label02',
+  'helperText01',
+  'helperText02',
+  'legal01',
+  'legal02',
+  'bodyCompact01',
+  'bodyCompact02',
+  'body01',
+  'body02',
+  'code01',
+  'code02',
+  'headingCompact01',
+  'headingCompact02',
+  'heading01',
+  'heading02',
+  'heading03',
+  'heading04',
+  'heading05',
+  'heading06',
+  'heading07',
+  // Carbon v10 compatibility names. They remain useful to older contracts and
+  // are emitted when the installed @carbon/type package still exposes them.
+  'bodyShort01',
+  'bodyLong01',
+  'productiveHeading03',
+  'productiveHeading05',
+  'productiveHeading06',
+  'productiveHeading07',
+  'expressiveHeading03',
+  'expressiveHeading05',
+];
+
+const generatedTypeMap = Object.fromEntries(
+  typeNames
+    .filter((name) => type[name] != null)
+    .map((name) => [name, typeStyle(type[name])]),
+);
+
+if (Object.keys(generatedTypeMap).length === 0) {
+  throw new Error('No supported Carbon typography tokens were found in @carbon/type.');
+}
+
+// Carbon v10 exposed a smaller productive/expressive scale. Keep the
+// canonical v11 contract surface complete when regenerating against either
+// package generation, then let official package values override these
+// source-backed compatibility values wherever they are available.
 const typeMap = {
-  caption01: typeStyle(type.caption01),
-  label01: typeStyle(type.label01),
-  bodyShort01: typeStyle(type.bodyShort01),
-  bodyLong01: typeStyle(type.bodyLong01),
-  code01: typeStyle(type.code01),
-  heading01: typeStyle(type.heading01),
-  productiveHeading03: typeStyle(type.productiveHeading03),
-  productiveHeading05: typeStyle(type.productiveHeading05),
-  productiveHeading06: typeStyle(type.productiveHeading06),
-  productiveHeading07: typeStyle(type.productiveHeading07),
-  expressiveHeading03: typeStyle(type.expressiveHeading03),
-  expressiveHeading05: typeStyle(type.expressiveHeading05),
+  caption01: { fontSize: 12, fontWeight: 400, lineHeight: 16, letterSpacing: 0.32 },
+  label01: { fontSize: 12, fontWeight: 400, lineHeight: 16, letterSpacing: 0.32 },
+  label02: { fontSize: 14, fontWeight: 400, lineHeight: 18, letterSpacing: 0.16 },
+  helperText01: { fontSize: 12, fontWeight: 400, lineHeight: 16, letterSpacing: 0.32 },
+  helperText02: { fontSize: 14, fontWeight: 400, lineHeight: 18, letterSpacing: 0.16 },
+  legal01: { fontSize: 12, fontWeight: 400, lineHeight: 16, letterSpacing: 0.32 },
+  legal02: { fontSize: 14, fontWeight: 400, lineHeight: 18, letterSpacing: 0.16 },
+  bodyCompact01: { fontSize: 14, fontWeight: 400, lineHeight: 18, letterSpacing: 0.16 },
+  bodyCompact02: { fontSize: 16, fontWeight: 400, lineHeight: 22, letterSpacing: 0 },
+  body01: { fontSize: 14, fontWeight: 400, lineHeight: 20, letterSpacing: 0.16 },
+  body02: { fontSize: 16, fontWeight: 400, lineHeight: 24, letterSpacing: 0 },
+  code01: { fontSize: 12, fontWeight: 400, lineHeight: 16, letterSpacing: 0.32 },
+  code02: { fontSize: 14, fontWeight: 400, lineHeight: 20, letterSpacing: 0.32 },
+  headingCompact01: { fontSize: 14, fontWeight: 600, lineHeight: 18, letterSpacing: 0.16 },
+  headingCompact02: { fontSize: 16, fontWeight: 600, lineHeight: 22, letterSpacing: 0 },
+  heading01: { fontSize: 14, fontWeight: 600, lineHeight: 20, letterSpacing: 0.16 },
+  heading02: { fontSize: 16, fontWeight: 600, lineHeight: 24, letterSpacing: 0 },
+  heading03: { fontSize: 20, fontWeight: 400, lineHeight: 28, letterSpacing: 0 },
+  heading04: { fontSize: 28, fontWeight: 400, lineHeight: 36, letterSpacing: 0 },
+  heading05: { fontSize: 32, fontWeight: 400, lineHeight: 40, letterSpacing: 0 },
+  heading06: { fontSize: 42, fontWeight: 300, lineHeight: 50, letterSpacing: 0 },
+  heading07: { fontSize: 54, fontWeight: 300, lineHeight: 64, letterSpacing: 0 },
+  ...generatedTypeMap,
 };
+
+const compatibilityAliases = {
+  bodyShort01: 'bodyCompact01',
+  bodyLong01: 'body01',
+  productiveHeading03: 'heading03',
+  productiveHeading05: 'heading05',
+  productiveHeading06: 'heading06',
+  productiveHeading07: 'heading07',
+  expressiveHeading03: 'heading03',
+  expressiveHeading05: 'heading05',
+};
+for (const [alias, canonical] of Object.entries(compatibilityAliases)) {
+  typeMap[alias] ??= typeMap[canonical];
+}
 
 const template = await readFile(outPath, 'utf8');
 const constantsMarker = 'const carbonThemeWhite = CarbonGeneratedTheme(';
@@ -161,9 +235,9 @@ const dart = templateHeader +
   `  iconSize01: ${px(layout.iconSize01)},\n` +
   `  iconSize02: ${px(layout.iconSize02)},\n` +
   `);\n\n` +
-  `const carbonTypeProductive = CarbonGeneratedTypeSet(\n` +
+  `const carbonTypeProductive = CarbonGeneratedTypeSet({\n` +
   Object.entries(typeMap).map(([name, value]) => styleConst(name, value)).join('\n') +
-  `\n);\n\n` +
+  `\n});\n\n` +
   `const carbonTypeExpressive = carbonTypeProductive;\n`;
 await writeFile(outPath, dart);
 console.log(`Generated ${outPath}`);

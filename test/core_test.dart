@@ -104,6 +104,31 @@ void main() {
       expect(tokens.backgroundPrimary, const Color(0xFFFFFFFF));
     });
 
+    test(
+      'resolves the complete Carbon type scale and compatibility aliases',
+      () {
+        final tokens = CarbonTokens(Brightness.light);
+
+        for (final name in tokens.typeSource.styles.keys) {
+          final style = tokens.resolveTypeStyle(name);
+          expect(
+            style.fontFamily,
+            name.startsWith('code') ? 'IBM Plex Mono' : 'IBM Plex Sans',
+            reason: name,
+          );
+          expect(style.fontSize, isNotNull, reason: name);
+          expect(style.height, isNotNull, reason: name);
+        }
+
+        expect(tokens.resolveTypeStyle('heading-03').fontSize, 20);
+        expect(tokens.resolveTypeStyle('headline6').fontSize, 14);
+        expect(tokens.resolveTypeStyle('body2').fontSize, 14);
+        expect(tokens.resolveTypeStyle('body1').fontSize, 14);
+        expect(tokens.resolveTypeStyle('mono').fontFamily, 'IBM Plex Mono');
+        expect(tokens.resolveTypeStyle('unknown-token').fontSize, 14);
+      },
+    );
+
     test('exposes explicit Carbon theme variants', () {
       final white = CarbonThemeWhite();
       final g10 = CarbonThemeG10();

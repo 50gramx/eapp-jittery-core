@@ -4,7 +4,7 @@ import 'package:yaml/yaml.dart';
 import '../design/design_tokens.dart';
 
 /// Abstract component composer that can work with different design language implementations.
-/// 
+///
 /// This class provides the framework for composing components from contracts,
 /// but delegates the actual component creation to design language specific implementations.
 abstract class JitteryComponentComposer {
@@ -22,33 +22,39 @@ abstract class JitteryComponentComposer {
       required int communityCode,
       required String componentNameCode,
       required String orgName,
-    }) componentResolver,
+    })
+    componentResolver,
     required Widget Function({
       required int communityCode,
       required String orgName,
       required String appName,
       required String tileNameCode,
-    }) tileResolver,
+    })
+    tileResolver,
     Function({
       required int communityCode,
       required String orgName,
       required String appName,
       required String capabilityNameCode,
-    })? capabilityResolver,
+    })?
+    capabilityResolver,
     Function({
       required int communityCode,
       required String orgName,
       required String appName,
       required String variableNameCode,
-    })? variableResolver,
+    })?
+    variableResolver,
     void Function({
       required String variableNameCode,
       required void Function(dynamic value) onChanged,
-    })? variableSubscriber,
+    })?
+    variableSubscriber,
     void Function({
       required String variableNameCode,
       required void Function(dynamic value) onChanged,
-    })? variableUnsubscriber,
+    })?
+    variableUnsubscriber,
   });
 
   /// Get the component code from the component name code
@@ -73,19 +79,13 @@ abstract class JitteryComponentComposer {
   });
 
   /// Build a column layout
-  Widget buildColumn({
-    required List<Widget> children,
-  });
+  Widget buildColumn({required List<Widget> children});
 
   /// Build a row layout
-  Widget buildRow({
-    required List<Widget> children,
-  });
+  Widget buildRow({required List<Widget> children});
 
   /// Build a tile header
-  Widget buildTileHeader({
-    required String label,
-  });
+  Widget buildTileHeader({required String label});
 
   /// Build a dropdown component
   Widget buildDropdown({
@@ -96,6 +96,7 @@ abstract class JitteryComponentComposer {
 
   /// Build a spacer/empty widget
   Widget buildSpacer();
+
   /// Build a typography component
   Widget buildTypography({
     required String text,
@@ -104,6 +105,12 @@ abstract class JitteryComponentComposer {
     Color? color,
     int? maxLines,
     String overflow = 'ellipsis',
+    double? fontSize,
+    int? fontWeight,
+    double? lineHeight,
+    double? letterSpacing,
+    String? fontStyle,
+    String? decoration,
   });
 
   /// Build an image component
@@ -197,11 +204,19 @@ abstract class JitteryComponentComposer {
     required IconData icon,
     double? size,
     Color? color,
+    String? semanticLabel,
   }) {
-    return Builder(builder: (context) {
-      final t = resolveTokens(context);
-      return Icon(icon, size: size ?? 20, color: color ?? t.contentSecondary);
-    });
+    return Builder(
+      builder: (context) {
+        final t = resolveTokens(context);
+        return Icon(
+          icon,
+          size: size ?? 20,
+          color: color ?? t.contentSecondary,
+          semanticLabel: semanticLabel,
+        );
+      },
+    );
   }
 
   /// An icon-only button with a tooltip and hover feedback. [semantic] selects
@@ -213,17 +228,19 @@ abstract class JitteryComponentComposer {
     String semantic = 'neutral',
     double? size,
   }) {
-    return Builder(builder: (context) {
-      final t = resolveTokens(context);
-      return _ComposerIconButton(
-        icon: icon,
-        onPressed: onPressed,
-        tooltip: tooltip,
-        tokens: t,
-        semantic: semantic,
-        size: size ?? 18,
-      );
-    });
+    return Builder(
+      builder: (context) {
+        final t = resolveTokens(context);
+        return _ComposerIconButton(
+          icon: icon,
+          onPressed: onPressed,
+          tooltip: tooltip,
+          tokens: t,
+          semantic: semantic,
+          size: size ?? 18,
+        );
+      },
+    );
   }
 
   /// A compact status pill. [status] ∈ neutral | accent | success | warning |
@@ -233,77 +250,81 @@ abstract class JitteryComponentComposer {
     String status = 'neutral',
     IconData? icon,
   }) {
-    return Builder(builder: (context) {
-      final t = resolveTokens(context);
-      Color fg;
-      switch (status) {
-        case 'accent':
-          fg = t.accent;
-          break;
-        case 'success':
-          fg = t.success;
-          break;
-        case 'warning':
-          fg = t.warning;
-          break;
-        case 'error':
-        case 'danger':
-          fg = t.error;
-          break;
-        default:
-          fg = t.contentSecondary;
-      }
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: t.space2, vertical: t.space1 / 2),
-        decoration: BoxDecoration(
-          color: fg.withOpacity(0.12),
-          borderRadius: BorderRadius.circular(t.radiusSmall),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 11, color: fg),
-              SizedBox(width: t.space1),
+    return Builder(
+      builder: (context) {
+        final t = resolveTokens(context);
+        Color fg;
+        switch (status) {
+          case 'accent':
+            fg = t.accent;
+            break;
+          case 'success':
+            fg = t.success;
+            break;
+          case 'warning':
+            fg = t.warning;
+            break;
+          case 'error':
+          case 'danger':
+            fg = t.error;
+            break;
+          default:
+            fg = t.contentSecondary;
+        }
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: t.space2,
+            vertical: t.space1 / 2,
+          ),
+          decoration: BoxDecoration(
+            color: fg.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(t.radiusSmall),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 11, color: fg),
+                SizedBox(width: t.space1),
+              ],
+              Text(
+                label,
+                style: t.label.copyWith(color: fg, fontWeight: FontWeight.w600),
+              ),
             ],
-            Text(
-              label,
-              style: t.label.copyWith(color: fg, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
   }
 
   /// A determinate progress bar (0..1) with an optional caption above it.
-  Widget buildProgressBar({
-    required double value,
-    String? label,
-  }) {
-    return Builder(builder: (context) {
-      final t = resolveTokens(context);
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (label != null)
-            Padding(
-              padding: EdgeInsets.only(bottom: t.space1),
-              child: Text(label, style: t.label),
+  Widget buildProgressBar({required double value, String? label}) {
+    return Builder(
+      builder: (context) {
+        final t = resolveTokens(context);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (label != null)
+              Padding(
+                padding: EdgeInsets.only(bottom: t.space1),
+                child: Text(label, style: t.label),
+              ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(t.radiusSmall),
+              child: LinearProgressIndicator(
+                value: value.clamp(0.0, 1.0),
+                minHeight: 4,
+                backgroundColor: t.backgroundTertiary,
+                valueColor: AlwaysStoppedAnimation<Color>(t.accent),
+              ),
             ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(t.radiusSmall),
-            child: LinearProgressIndicator(
-              value: value.clamp(0.0, 1.0),
-              minHeight: 4,
-              backgroundColor: t.backgroundTertiary,
-              valueColor: AlwaysStoppedAnimation<Color>(t.accent),
-            ),
-          ),
-        ],
-      );
-    });
+          ],
+        );
+      },
+    );
   }
 
   /// A shrink-wrapped grid (does not scroll itself — host inside a scroll).
@@ -313,19 +334,21 @@ abstract class JitteryComponentComposer {
     double? spacing,
     double? childAspectRatio,
   }) {
-    return Builder(builder: (context) {
-      final t = resolveTokens(context);
-      final s = spacing ?? t.space3;
-      return GridView.count(
-        crossAxisCount: crossAxisCount,
-        mainAxisSpacing: s,
-        crossAxisSpacing: s,
-        childAspectRatio: childAspectRatio ?? 1.0,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        children: children,
-      );
-    });
+    return Builder(
+      builder: (context) {
+        final t = resolveTokens(context);
+        final s = spacing ?? t.space3;
+        return GridView.count(
+          crossAxisCount: crossAxisCount,
+          mainAxisSpacing: s,
+          crossAxisSpacing: s,
+          childAspectRatio: childAspectRatio ?? 1.0,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          children: children,
+        );
+      },
+    );
   }
 
   /// Resolve a semantic status name to its role colour.
@@ -359,22 +382,27 @@ abstract class JitteryComponentComposer {
     String? caption,
     String status = 'neutral',
   }) {
-    return Builder(builder: (context) {
-      final t = resolveTokens(context);
-      final valueColor =
-          status == 'neutral' ? t.contentPrimary : statusColor(status, t);
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(value, style: t.displayMedium.copyWith(color: valueColor)),
-          SizedBox(height: t.space1),
-          Text(label, style: t.label),
-          if (caption != null)
-            Text(caption, style: t.caption.copyWith(color: t.contentTertiary)),
-        ],
-      );
-    });
+    return Builder(
+      builder: (context) {
+        final t = resolveTokens(context);
+        final valueColor =
+            status == 'neutral' ? t.contentPrimary : statusColor(status, t);
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(value, style: t.displayMedium.copyWith(color: valueColor)),
+            SizedBox(height: t.space1),
+            Text(label, style: t.label),
+            if (caption != null)
+              Text(
+                caption,
+                style: t.caption.copyWith(color: t.contentTertiary),
+              ),
+          ],
+        );
+      },
+    );
   }
 
   /// A data table — header [columns] + [rows] of equal-weight string cells.
@@ -383,33 +411,48 @@ abstract class JitteryComponentComposer {
     required List<String> columns,
     required List<List<String>> rows,
   }) {
-    return Builder(builder: (context) {
-      final t = resolveTokens(context);
-      Widget cell(String s, TextStyle style) =>
-          Expanded(child: Text(s, style: style, overflow: TextOverflow.ellipsis));
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: t.space2, horizontal: t.space2),
-            child: Row(
-              children: [
-                for (final c in columns)
-                  cell(c, t.label.copyWith(color: t.contentSecondary, fontWeight: FontWeight.w600)),
-              ],
-            ),
-          ),
-          Container(height: 1, color: t.borderStrong),
-          for (final r in rows) ...[
+    return Builder(
+      builder: (context) {
+        final t = resolveTokens(context);
+        Widget cell(String s, TextStyle style) => Expanded(
+          child: Text(s, style: style, overflow: TextOverflow.ellipsis),
+        );
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             Padding(
-              padding: EdgeInsets.symmetric(vertical: t.space2, horizontal: t.space2),
-              child: Row(children: [for (final c in r) cell(c, t.bodySmall)]),
+              padding: EdgeInsets.symmetric(
+                vertical: t.space2,
+                horizontal: t.space2,
+              ),
+              child: Row(
+                children: [
+                  for (final c in columns)
+                    cell(
+                      c,
+                      t.label.copyWith(
+                        color: t.contentSecondary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                ],
+              ),
             ),
-            Container(height: 1, color: t.borderSubtle),
+            Container(height: 1, color: t.borderStrong),
+            for (final r in rows) ...[
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: t.space2,
+                  horizontal: t.space2,
+                ),
+                child: Row(children: [for (final c in r) cell(c, t.bodySmall)]),
+              ),
+              Container(height: 1, color: t.borderSubtle),
+            ],
           ],
-        ],
-      );
-    });
+        );
+      },
+    );
   }
 
   /// An inline notification banner. [kind] ∈ success | warning | error | info.
@@ -421,65 +464,82 @@ abstract class JitteryComponentComposer {
     String? actionLabel,
     VoidCallback? onAction,
   }) {
-    return Builder(builder: (context) {
-      final t = resolveTokens(context);
-      final fg = statusColor(kind, t);
-      Color bg;
-      IconData icon;
-      switch (kind) {
-        case 'success':
-        case 'positive':
-          bg = t.successSubtle;
-          icon = Icons.check_circle_outline;
-          break;
-        case 'warning':
-        case 'caution':
-          bg = t.warningSubtle;
-          icon = Icons.warning_amber_outlined;
-          break;
-        case 'error':
-        case 'danger':
-        case 'negative':
-          bg = t.errorSubtle;
-          icon = Icons.error_outline;
-          break;
-        default:
-          bg = t.infoSubtle;
-          icon = Icons.info_outline;
-      }
-      return Container(
-        padding: EdgeInsets.all(t.space3),
-        decoration: BoxDecoration(
-          color: bg,
-          border: Border(left: BorderSide(color: fg, width: 3)),
-          borderRadius: BorderRadius.circular(t.radiusSmall),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 16, color: fg),
-            SizedBox(width: t.space2),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(title, style: t.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
-                  if (body != null)
-                    Text(body, style: t.bodySmall.copyWith(color: t.contentSecondary)),
-                ],
+    return Builder(
+      builder: (context) {
+        final t = resolveTokens(context);
+        final fg = statusColor(kind, t);
+        Color bg;
+        IconData icon;
+        switch (kind) {
+          case 'success':
+          case 'positive':
+            bg = t.successSubtle;
+            icon = Icons.check_circle_outline;
+            break;
+          case 'warning':
+          case 'caution':
+            bg = t.warningSubtle;
+            icon = Icons.warning_amber_outlined;
+            break;
+          case 'error':
+          case 'danger':
+          case 'negative':
+            bg = t.errorSubtle;
+            icon = Icons.error_outline;
+            break;
+          default:
+            bg = t.infoSubtle;
+            icon = Icons.info_outline;
+        }
+        return Container(
+          padding: EdgeInsets.all(t.space3),
+          decoration: BoxDecoration(
+            color: bg,
+            border: Border(left: BorderSide(color: fg, width: 3)),
+            borderRadius: BorderRadius.circular(t.radiusSmall),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(icon, size: 16, color: fg),
+              SizedBox(width: t.space2),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: t.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    if (body != null)
+                      Text(
+                        body,
+                        style: t.bodySmall.copyWith(color: t.contentSecondary),
+                      ),
+                  ],
+                ),
               ),
-            ),
-            if (actionLabel != null && onAction != null)
-              TextButton(
-                onPressed: onAction,
-                style: TextButton.styleFrom(foregroundColor: fg, padding: EdgeInsets.symmetric(horizontal: t.space2)),
-                child: Text(actionLabel, style: t.label.copyWith(color: fg, fontWeight: FontWeight.w600)),
-              ),
-          ],
-        ),
-      );
-    });
+              if (actionLabel != null && onAction != null)
+                TextButton(
+                  onPressed: onAction,
+                  style: TextButton.styleFrom(
+                    foregroundColor: fg,
+                    padding: EdgeInsets.symmetric(horizontal: t.space2),
+                  ),
+                  child: Text(
+                    actionLabel,
+                    style: t.label.copyWith(
+                      color: fg,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -512,9 +572,10 @@ class _ComposerIconButtonState extends State<_ComposerIconButton> {
   @override
   Widget build(BuildContext context) {
     final t = widget.tokens;
-    final Color active = widget.semantic == 'danger'
-        ? t.error
-        : widget.semantic == 'accent'
+    final Color active =
+        widget.semantic == 'danger'
+            ? t.error
+            : widget.semantic == 'accent'
             ? t.accent
             : t.contentPrimary;
     final Color fg = _hovering ? active : t.contentTertiary;

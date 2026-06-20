@@ -139,33 +139,11 @@ class CarbonGeneratedTypeStyle {
 }
 
 class CarbonGeneratedTypeSet {
-  const CarbonGeneratedTypeSet({
-    required this.caption01,
-    required this.label01,
-    required this.bodyShort01,
-    required this.bodyLong01,
-    required this.code01,
-    required this.heading01,
-    required this.productiveHeading03,
-    required this.productiveHeading05,
-    required this.productiveHeading06,
-    required this.productiveHeading07,
-    required this.expressiveHeading03,
-    required this.expressiveHeading05,
-  });
+  const CarbonGeneratedTypeSet(this.styles);
 
-  final CarbonGeneratedTypeStyle caption01;
-  final CarbonGeneratedTypeStyle label01;
-  final CarbonGeneratedTypeStyle bodyShort01;
-  final CarbonGeneratedTypeStyle bodyLong01;
-  final CarbonGeneratedTypeStyle code01;
-  final CarbonGeneratedTypeStyle heading01;
-  final CarbonGeneratedTypeStyle productiveHeading03;
-  final CarbonGeneratedTypeStyle productiveHeading05;
-  final CarbonGeneratedTypeStyle productiveHeading06;
-  final CarbonGeneratedTypeStyle productiveHeading07;
-  final CarbonGeneratedTypeStyle expressiveHeading03;
-  final CarbonGeneratedTypeStyle expressiveHeading05;
+  final Map<String, CarbonGeneratedTypeStyle> styles;
+
+  CarbonGeneratedTypeStyle? operator [](String name) => styles[name];
 }
 
 const carbonThemeWhite = CarbonGeneratedTheme(
@@ -328,79 +306,187 @@ const carbonLayout = CarbonGeneratedLayout(
   iconSize02: 20,
 );
 
-const carbonTypeProductive = CarbonGeneratedTypeSet(
-  caption01: CarbonGeneratedTypeStyle(
+const carbonTypeProductive = CarbonGeneratedTypeSet({
+  'caption01': CarbonGeneratedTypeStyle(
     fontSize: 12,
     fontWeight: 400,
     lineHeight: 16,
     letterSpacing: 0.32,
   ),
-  label01: CarbonGeneratedTypeStyle(
+  'label01': CarbonGeneratedTypeStyle(
     fontSize: 12,
     fontWeight: 400,
     lineHeight: 16,
     letterSpacing: 0.32,
   ),
-  bodyShort01: CarbonGeneratedTypeStyle(
+  'label02': CarbonGeneratedTypeStyle(
     fontSize: 14,
     fontWeight: 400,
     lineHeight: 18,
     letterSpacing: 0.16,
   ),
-  bodyLong01: CarbonGeneratedTypeStyle(
+  'helperText01': CarbonGeneratedTypeStyle(
+    fontSize: 12,
+    fontWeight: 400,
+    lineHeight: 16,
+    letterSpacing: 0.32,
+  ),
+  'helperText02': CarbonGeneratedTypeStyle(
+    fontSize: 14,
+    fontWeight: 400,
+    lineHeight: 18,
+    letterSpacing: 0.16,
+  ),
+  'legal01': CarbonGeneratedTypeStyle(
+    fontSize: 12,
+    fontWeight: 400,
+    lineHeight: 16,
+    letterSpacing: 0.32,
+  ),
+  'legal02': CarbonGeneratedTypeStyle(
+    fontSize: 14,
+    fontWeight: 400,
+    lineHeight: 18,
+    letterSpacing: 0.16,
+  ),
+  'bodyCompact01': CarbonGeneratedTypeStyle(
+    fontSize: 14,
+    fontWeight: 400,
+    lineHeight: 18,
+    letterSpacing: 0.16,
+  ),
+  'bodyCompact02': CarbonGeneratedTypeStyle(
+    fontSize: 16,
+    fontWeight: 400,
+    lineHeight: 22,
+    letterSpacing: 0,
+  ),
+  'body01': CarbonGeneratedTypeStyle(
     fontSize: 14,
     fontWeight: 400,
     lineHeight: 20,
     letterSpacing: 0.16,
   ),
-  code01: CarbonGeneratedTypeStyle(
+  'body02': CarbonGeneratedTypeStyle(
+    fontSize: 16,
+    fontWeight: 400,
+    lineHeight: 24,
+    letterSpacing: 0,
+  ),
+  'code01': CarbonGeneratedTypeStyle(
     fontSize: 12,
     fontWeight: 400,
     lineHeight: 16,
     letterSpacing: 0.32,
   ),
-  heading01: CarbonGeneratedTypeStyle(
+  'code02': CarbonGeneratedTypeStyle(
+    fontSize: 14,
+    fontWeight: 400,
+    lineHeight: 20,
+    letterSpacing: 0.32,
+  ),
+  'headingCompact01': CarbonGeneratedTypeStyle(
     fontSize: 14,
     fontWeight: 600,
     lineHeight: 18,
     letterSpacing: 0.16,
   ),
-  productiveHeading03: CarbonGeneratedTypeStyle(
+  'headingCompact02': CarbonGeneratedTypeStyle(
+    fontSize: 16,
+    fontWeight: 600,
+    lineHeight: 22,
+    letterSpacing: 0,
+  ),
+  'heading01': CarbonGeneratedTypeStyle(
+    fontSize: 14,
+    fontWeight: 600,
+    lineHeight: 20,
+    letterSpacing: 0.16,
+  ),
+  'heading02': CarbonGeneratedTypeStyle(
+    fontSize: 16,
+    fontWeight: 600,
+    lineHeight: 24,
+    letterSpacing: 0,
+  ),
+  'heading03': CarbonGeneratedTypeStyle(
     fontSize: 20,
     fontWeight: 400,
     lineHeight: 28,
     letterSpacing: 0,
   ),
-  productiveHeading05: CarbonGeneratedTypeStyle(
+  'heading04': CarbonGeneratedTypeStyle(
+    fontSize: 28,
+    fontWeight: 400,
+    lineHeight: 36,
+    letterSpacing: 0,
+  ),
+  'heading05': CarbonGeneratedTypeStyle(
     fontSize: 32,
     fontWeight: 400,
     lineHeight: 40,
     letterSpacing: 0,
   ),
-  productiveHeading06: CarbonGeneratedTypeStyle(
+  'heading06': CarbonGeneratedTypeStyle(
     fontSize: 42,
     fontWeight: 300,
     lineHeight: 50,
     letterSpacing: 0,
   ),
-  productiveHeading07: CarbonGeneratedTypeStyle(
+  'heading07': CarbonGeneratedTypeStyle(
     fontSize: 54,
     fontWeight: 300,
     lineHeight: 64,
     letterSpacing: 0,
   ),
-  expressiveHeading03: CarbonGeneratedTypeStyle(
+  'bodyShort01': CarbonGeneratedTypeStyle(
+    fontSize: 14,
+    fontWeight: 400,
+    lineHeight: 18,
+    letterSpacing: 0.16,
+  ),
+  'bodyLong01': CarbonGeneratedTypeStyle(
+    fontSize: 14,
+    fontWeight: 400,
+    lineHeight: 20,
+    letterSpacing: 0.16,
+  ),
+  'productiveHeading03': CarbonGeneratedTypeStyle(
     fontSize: 20,
     fontWeight: 400,
     lineHeight: 28,
     letterSpacing: 0,
   ),
-  expressiveHeading05: CarbonGeneratedTypeStyle(
+  'productiveHeading05': CarbonGeneratedTypeStyle(
     fontSize: 32,
     fontWeight: 400,
     lineHeight: 40,
     letterSpacing: 0,
   ),
-);
+  'productiveHeading06': CarbonGeneratedTypeStyle(
+    fontSize: 42,
+    fontWeight: 300,
+    lineHeight: 50,
+    letterSpacing: 0,
+  ),
+  'productiveHeading07': CarbonGeneratedTypeStyle(
+    fontSize: 54,
+    fontWeight: 300,
+    lineHeight: 64,
+    letterSpacing: 0,
+  ),
+  'expressiveHeading03': CarbonGeneratedTypeStyle(
+    fontSize: 20,
+    fontWeight: 400,
+    lineHeight: 28,
+    letterSpacing: 0,
+  ),
+  'expressiveHeading05': CarbonGeneratedTypeStyle(
+    fontSize: 32,
+    fontWeight: 400,
+    lineHeight: 40,
+    letterSpacing: 0,
+  ),
+});
 
 const carbonTypeExpressive = carbonTypeProductive;
