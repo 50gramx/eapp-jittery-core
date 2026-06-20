@@ -410,46 +410,138 @@ abstract class JitteryComponentComposer {
   Widget buildTable({
     required List<String> columns,
     required List<List<String>> rows,
+    List<List<String>>? cellStatuses,
+    List<double>? columnWeights,
+    List<String>? columnVariants,
+    Set<int>? wrapColumns,
+    double? minWidth,
+    String? emptyMessage,
   }) {
     return Builder(
       builder: (context) {
         final t = resolveTokens(context);
-        Widget cell(String s, TextStyle style) => Expanded(
-          child: Text(s, style: style, overflow: TextOverflow.ellipsis),
-        );
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: t.space2,
-                horizontal: t.space2,
+        final weights = columnWeights ?? const <double>[];
+        final variants = columnVariants ?? const <String>[];
+        final wrapping = wrapColumns ?? const <int>{};
+        final statuses = cellStatuses ?? const <List<String>>[];
+        TextStyle variantStyle(int index) {
+          if (index >= variants.length) return t.bodySmall;
+          return switch (variants[index].toLowerCase()) {
+            'code01' || 'code02' || 'mono' => t.mono,
+            'label01' || 'label02' => t.label,
+            'caption01' || 'caption02' => t.caption,
+            'heading01' || 'heading02' => t.headingMedium,
+            'heading03' || 'heading04' => t.headingLarge,
+            'body01' || 'body02' || 'bodycompact01' => t.bodyMedium,
+            _ => t.bodySmall,
+          };
+        }
+
+        Widget cell(String s, TextStyle style, int index, {String? status}) =>
+            Expanded(
+              flex:
+                  index < weights.length && weights[index] > 0
+                      ? (weights[index] * 100).round()
+                      : 100,
+              child: Text(
+                s,
+                style:
+                    status == null || status.isEmpty
+                        ? style
+                        : style.copyWith(color: statusColor(status, t)),
+                maxLines: wrapping.contains(index) ? null : 1,
+                overflow:
+                    wrapping.contains(index)
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
               ),
-              child: Row(
-                children: [
-                  for (final c in columns)
-                    cell(
-                      c,
-                      t.label.copyWith(
-                        color: t.contentSecondary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            Container(height: 1, color: t.borderStrong),
-            for (final r in rows) ...[
+            );
+        Widget table(double? width) => SizedBox(
+          width: width,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               Padding(
                 padding: EdgeInsets.symmetric(
                   vertical: t.space2,
                   horizontal: t.space2,
                 ),
-                child: Row(children: [for (final c in r) cell(c, t.bodySmall)]),
+                child: Row(
+                  children: [
+                    for (var i = 0; i < columns.length; i++)
+                      cell(
+                        columns[i],
+                        t.label.copyWith(
+                          color: t.contentSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        i,
+                      ),
+                  ],
+                ),
               ),
-              Container(height: 1, color: t.borderSubtle),
+              Container(height: 1, color: t.borderStrong),
+              if (rows.isEmpty && emptyMessage != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: t.space3,
+                    horizontal: t.space2,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      emptyMessage,
+                      style: t.bodySmall.copyWith(color: t.contentTertiary),
+                    ),
+                  ),
+                ),
+              for (var rowIndex = 0; rowIndex < rows.length; rowIndex++) ...[
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: t.space2,
+                    horizontal: t.space2,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (var i = 0; i < columns.length; i++)
+                        cell(
+                          i < rows[rowIndex].length ? rows[rowIndex][i] : '',
+                          variantStyle(i),
+                          i,
+                          status:
+                              rowIndex < statuses.length &&
+                                      i < statuses[rowIndex].length
+                                  ? statuses[rowIndex][i]
+                                  : null,
+                        ),
+                    ],
+                  ),
+                ),
+                Container(height: 1, color: t.borderSubtle),
+              ],
             ],
-          ],
+          ),
+        );
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final available =
+                constraints.maxWidth.isFinite ? constraints.maxWidth : null;
+            final width =
+                available == null
+                    ? minWidth
+                    : minWidth != null && minWidth > available
+                    ? minWidth
+                    : available;
+            final content = table(width);
+            if (available != null && minWidth != null && minWidth > available) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: content,
+              );
+            }
+            return content;
+          },
         );
       },
     );
