@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';
 
 import '../design/design_tokens.dart';
@@ -55,6 +55,11 @@ abstract class JitteryComponentComposer {
       required void Function(dynamic value) onChanged,
     })?
     variableUnsubscriber,
+    void Function({
+      required String variableNameCode,
+      required dynamic value,
+    })?
+    variableUpdater,
   });
 
   /// Get the component code from the component name code
